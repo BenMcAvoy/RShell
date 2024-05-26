@@ -8,14 +8,16 @@ macro_rules! printnnl {($($arg:tt)*) => {print!($($arg)*);io::stdout().flush().u
 fn main() {
     let commands: HashMap<&str, Box<dyn Fn(Vec<&str>) -> ()>> = HashMap::new();
 
-    printnnl!("$ ");
+    loop {
+        printnnl!("$ ");
 
-    let stdin = io::stdin();
-    let mut input = String::new();
-    stdin.read_line(&mut input).unwrap();
+        let stdin = io::stdin();
+        let mut input = String::new();
+        stdin.read_line(&mut input).unwrap();
 
-    match commands.get(input.trim()) {
-        Some(command) => command(vec![]),
-        None => println!("{}: command not found", input.trim()),
+        match commands.get(input.trim()) {
+            Some(command) => command(vec![]),
+            None => println!("{}: command not found", input.trim()),
+        }
     }
 }
