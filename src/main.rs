@@ -17,7 +17,7 @@ use types::Args;
 fn main() {
     let builtins = builtins_map! {
         "history" => history,
-        "type" => builtins,
+        "type" => btype,
         "exit" => exit,
         "echo" => echo,
         "cd" => cd,
