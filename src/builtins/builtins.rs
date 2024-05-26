@@ -8,7 +8,7 @@ pub fn builtins(args: Args) {
         if let Some(path) = is_in_path(&args.args[1], args.path) {
             println!("{} is {}", args.args[1], path);
         } else {
-            println!("{} not found", args.args[1]);
+            println!("{}: not found", args.args[1]);
         }
     }
 }

@@ -1,4 +1,6 @@
 use std::io::{self, Write};
+use std::path::Path;
+use std::process::Command;
 
 #[macro_use]
 mod macros;
@@ -41,7 +43,21 @@ fn main() {
                 path: path.clone(),
             }),
 
-            None => println!("{}: command not found", input.trim()),
+            None => {
+                if Path::new(command).exists() {
+                    let status = Command::new(command).args(&args[1..]).status().unwrap();
+                    if !status.success() {
+                        println!("{}: exit {}", command, status.code().unwrap());
+                    }
+                } else if let Some(path) = path::is_in_path(command, path.clone()) {
+                    let status = Command::new(path).args(&args[1..]).status().unwrap();
+                    if !status.success() {
+                        println!("{}: exit {}", command, status.code().unwrap());
+                    }
+                } else {
+                    println!("{}: not found", command);
+                }
+            }
         }
     }
 }
