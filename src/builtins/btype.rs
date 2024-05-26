@@ -1,5 +1,5 @@
-use crate::utils::find_program;
 use crate::types::Args;
+use crate::utils::find_program;
 
 pub fn btype(args: Args) {
     if args.list.len() > 1 {

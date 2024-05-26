@@ -1,7 +1,7 @@
 use std::io::{self, Write};
 use std::path::Path;
 
-use homedir::get_my_home;
+use colored::*;
 
 #[macro_use]
 mod macros;
@@ -12,6 +12,7 @@ mod utils;
 
 use builtins::prelude::*;
 use types::Args;
+use utils::get_home;
 
 fn main() {
     let builtins = builtins_map! {
@@ -28,8 +29,7 @@ fn main() {
         .collect::<Vec<String>>();
 
     let path = std::env::var("PATH").unwrap_or_default();
-    let histfile = get_my_home()
-        .expect("Couldn't get home dir")
+    let histfile = get_home()
         .expect("Couldn't get home dir")
         .join(".rshell_history");
 
@@ -42,8 +42,13 @@ fn main() {
 
     loop {
         printnnl!(
-            "<green>{} $</green> ",
-            std::env::current_dir().unwrap().display()
+            "{} ${} ",
+            std::env::current_dir()
+                .unwrap()
+                .display()
+                .to_string()
+                .green(),
+            "".normal(),
         );
 
         let stdin = io::stdin();
@@ -69,10 +74,10 @@ fn main() {
 
             None => {
                 if let Some(path) = utils::find_program(command, path.clone()) {
-                    utils::execute_command(&args, path);
+                    utils::execute_command(&args[1..], path);
                 } else {
                     if Path::new(command).exists() {
-                        utils::execute_command(&args, command.to_string());
+                        utils::execute_command(&args[1..], command.to_string());
                     } else {
                         eprintln!("{}: command not found", command);
                     }

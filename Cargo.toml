@@ -5,5 +5,4 @@ authors = ["Ben McAvoy <ben.mcavoy@tutanota.com>"]
 edition = "2021"
 
 [dependencies]
-color-print = "0.3.6"
-homedir = "0.2.1"
+colored = "2.1.0"
