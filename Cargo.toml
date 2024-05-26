@@ -6,3 +6,4 @@ edition = "2021"
 
 [dependencies]
 color-print = "0.3.6"
+homedir = "0.2.1"

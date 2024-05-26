@@ -2,6 +2,7 @@ use std::io::{self, Write};
 use std::path::Path;
 use std::process::Command;
 
+use homedir::get_my_home;
 
 #[macro_use]
 mod macros;
@@ -15,9 +16,10 @@ use types::Args;
 
 fn main() {
     let builtins = builtins_map! {
+        "history" => history,
+        "type" => builtins,
         "exit" => exit,
         "echo" => echo,
-        "type" => builtins,
         "cd" => cd,
     };
 
@@ -27,6 +29,14 @@ fn main() {
         .collect::<Vec<String>>();
 
     let path = std::env::var("PATH").unwrap_or_default();
+    let histfile = get_my_home().expect("Couldn't get home dir").expect("Couldn't get home dir").join(".rshell_history");
+
+    let mut history_file = std::fs::OpenOptions::new()
+        .read(true)
+        .append(true)
+        .create(true)
+        .open(histfile)
+        .unwrap();
 
     loop {
         printnnl!("<green>{} $</green> ", std::env::current_dir().unwrap().display());
@@ -42,6 +52,8 @@ fn main() {
         }
 
         let command = args[0];
+
+        history_file.write_all(input.as_bytes()).unwrap();
 
         match builtins.get(command) {
             Some(command) => command(Args {
