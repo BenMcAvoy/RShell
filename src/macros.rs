@@ -1,7 +1,7 @@
 #[macro_export]
 macro_rules! printnnl {
     ($($arg:tt)*) => {
-        print!($($arg)*);
+        color_print::cprint!($($arg)*);
         io::stdout().flush().unwrap();
     }
 }

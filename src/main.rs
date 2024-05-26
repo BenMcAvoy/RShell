@@ -2,6 +2,7 @@ use std::io::{self, Write};
 use std::path::Path;
 use std::process::Command;
 
+
 #[macro_use]
 mod macros;
 
@@ -28,7 +29,7 @@ fn main() {
     let path = std::env::var("PATH").unwrap_or_default();
 
     loop {
-        printnnl!("$ ");
+        printnnl!("<green>{} $</green> ", std::env::current_dir().unwrap().display());
 
         let stdin = io::stdin();
         let mut input = String::new();
