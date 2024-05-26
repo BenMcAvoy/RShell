@@ -1,4 +1,6 @@
-pub fn echo(args: Vec<&str>) {
-    let args = args[1..].join(" ");
+use crate::types::Args;
+
+pub fn echo(args: Args) {
+    let args = args.0[1..].join(" ");
     println!("{args}");
 }

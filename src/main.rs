@@ -1,8 +1,6 @@
-#![allow(unused_imports)]
-
-
-use std::collections::HashMap;
 use std::io::{self, Write};
+
+mod types;
 
 #[macro_use]
 mod macros;
@@ -14,7 +12,10 @@ fn main() {
     let builtins = builtins_map! {
         "exit" => exit,
         "echo" => echo,
+        "type" => builtins,
     };
+
+    let builtin_names = builtins.keys().map(|s| s.to_string()).collect::<Vec<String>>();
 
     loop {
         printnnl!("$ ");
@@ -27,7 +28,7 @@ fn main() {
         let command = args[0];
 
         match builtins.get(command) {
-            Some(command) => command(args),
+            Some(command) => command((args, builtin_names.clone())),
             None => println!("{}: command not found", input.trim()),
         }
     }
