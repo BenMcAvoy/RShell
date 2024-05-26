@@ -34,6 +34,11 @@ fn main() {
         stdin.read_line(&mut input).unwrap();
 
         let args = input.trim().split_whitespace().collect::<Vec<&str>>();
+
+        if args.len() == 0 {
+            continue;
+        }
+
         let command = args[0];
 
         match builtins.get(command) {

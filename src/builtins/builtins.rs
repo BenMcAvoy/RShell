@@ -2,6 +2,11 @@ use crate::types::Args;
 use crate::path::is_in_path;
 
 pub fn builtins(args: Args) {
+    if args.args.len() < 2 {
+        println!("type: missing argument");
+        return;
+    }
+
     if args.builtins.contains(&args.args[1].to_string()) {
         println!("{} is a shell builtin", args.args[1]);
     } else {
