@@ -17,6 +17,7 @@ fn main() {
         "exit" => exit,
         "echo" => echo,
         "type" => builtins,
+        "cd" => cd,
     };
 
     let builtin_names = builtins
