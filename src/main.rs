@@ -1,15 +1,14 @@
 use std::io::{self, Write};
 use std::path::Path;
-use std::process::Command;
 
 use homedir::get_my_home;
 
 #[macro_use]
 mod macros;
 
-mod path;
-mod types;
 mod builtins;
+mod types;
+mod utils;
 
 use builtins::prelude::*;
 use types::Args;
@@ -29,7 +28,10 @@ fn main() {
         .collect::<Vec<String>>();
 
     let path = std::env::var("PATH").unwrap_or_default();
-    let histfile = get_my_home().expect("Couldn't get home dir").expect("Couldn't get home dir").join(".rshell_history");
+    let histfile = get_my_home()
+        .expect("Couldn't get home dir")
+        .expect("Couldn't get home dir")
+        .join(".rshell_history");
 
     let mut history_file = std::fs::OpenOptions::new()
         .read(true)
@@ -39,7 +41,10 @@ fn main() {
         .unwrap();
 
     loop {
-        printnnl!("<green>{} $</green> ", std::env::current_dir().unwrap().display());
+        printnnl!(
+            "<green>{} $</green> ",
+            std::env::current_dir().unwrap().display()
+        );
 
         let stdin = io::stdin();
         let mut input = String::new();
@@ -57,24 +62,20 @@ fn main() {
 
         match builtins.get(command) {
             Some(command) => command(Args {
-                args,
+                list: args,
                 builtins: builtin_names.clone(),
                 path: path.clone(),
             }),
 
             None => {
-                if Path::new(command).exists() {
-                    let status = Command::new(command).args(&args[1..]).status().unwrap();
-                    if !status.success() {
-                        println!("{}: exit {}", command, status.code().unwrap());
-                    }
-                } else if let Some(path) = path::is_in_path(command, path.clone()) {
-                    let status = Command::new(path).args(&args[1..]).status().unwrap();
-                    if !status.success() {
-                        println!("{}: exit {}", command, status.code().unwrap());
-                    }
+                if let Some(path) = utils::find_program(command, path.clone()) {
+                    utils::execute_command(&args, path);
                 } else {
-                    println!("{}: not found", command);
+                    if Path::new(command).exists() {
+                        utils::execute_command(&args, command.to_string());
+                    } else {
+                        eprintln!("{}: command not found", command);
+                    }
                 }
             }
         }

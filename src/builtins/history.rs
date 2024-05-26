@@ -2,12 +2,13 @@ use crate::types::Args;
 use std::io::Read;
 
 pub fn history(args: Args) {
-    if args.args.len() > 2 {
+    if args.list.len() > 2 {
         eprintln!("history: too many arguments");
         return;
-    } else if args.args.len() == 2 {
-        if args.args[1] == "clear" {
-            let histfile = std::env::var("HOME").unwrap_or_default().to_string() + "/.rshell_history";
+    } else if args.list.len() == 2 {
+        if args.list[1] == "clear" {
+            let histfile =
+                std::env::var("HOME").unwrap_or_default().to_string() + "/.rshell_history";
 
             std::fs::OpenOptions::new()
                 .write(true)
