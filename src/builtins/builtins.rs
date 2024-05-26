@@ -1,8 +1,14 @@
 use crate::types::Args;
+use crate::path::is_in_path;
+
 pub fn builtins(args: Args) {
-    if args.1.contains(&args.0[1].to_string()) {
-        println!("{} is a shell builtin", args.0[1]);
+    if args.builtins.contains(&args.args[1].to_string()) {
+        println!("{} is a shell builtin", args.args[1]);
     } else {
-        println!("{} not found", args.0[1]);
+        if let Some(path) = is_in_path(&args.args[1], args.path) {
+            println!("{} is {}", args.args[1], path);
+        } else {
+            println!("{} not found", args.args[1]);
+        }
     }
 }

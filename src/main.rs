@@ -1,12 +1,14 @@
 use std::io::{self, Write};
 
-mod types;
-
 #[macro_use]
 mod macros;
 
+mod path;
+mod types;
 mod builtins;
+
 use builtins::prelude::*;
+use types::Args;
 
 fn main() {
     let builtins = builtins_map! {
@@ -15,7 +17,12 @@ fn main() {
         "type" => builtins,
     };
 
-    let builtin_names = builtins.keys().map(|s| s.to_string()).collect::<Vec<String>>();
+    let builtin_names = builtins
+        .keys()
+        .map(|s| s.to_string())
+        .collect::<Vec<String>>();
+
+    let path = std::env::var("PATH").unwrap_or_default();
 
     loop {
         printnnl!("$ ");
@@ -28,7 +35,12 @@ fn main() {
         let command = args[0];
 
         match builtins.get(command) {
-            Some(command) => command((args, builtin_names.clone())),
+            Some(command) => command(Args {
+                args,
+                builtins: builtin_names.clone(),
+                path: path.clone(),
+            }),
+
             None => println!("{}: command not found", input.trim()),
         }
     }
